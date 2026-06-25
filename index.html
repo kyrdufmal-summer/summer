@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dohyun Kim | Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+        /* Typing cursor effect */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-darkBg/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="text-xl font-extrabold tracking-tight text-primary-600 dark:text-primary-500">
+                DOHYUN<span class="text-slate-800 dark:text-slate-100">.K</span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="nav-link font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">소개</a>
+                <a href="#skills" class="nav-link font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">기술 스택</a>
+                <a href="#projects" class="nav-link font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">프로젝트</a>
+                <a href="#timeline" class="nav-link font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">경력</a>
+                <a href="#contact" class="nav-link font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">연락처</a>
+            </nav>
+
+            <!-- Actions (Theme Toggle & Mobile Menu Btn) -->
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle Button -->
+                <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon dark:hidden text-lg"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-lg"></i>
+                </button>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars text-lg" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-darkBg border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+            <div class="px-4 pt-2 pb-6 space-y-3">
+                <a href="#about" class="block mobile-nav-link px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">소개</a>
+                <a href="#skills" class="block mobile-nav-link px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">기술 스택</a>
+                <a href="#projects" class="block mobile-nav-link px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">프로젝트</a>
+                <a href="#timeline" class="block mobile-nav-link px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">경력</a>
+                <a href="#contact" class="block mobile-nav-link px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">연락처</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden flex-grow flex items-center">
+        <!-- Background decorative blobs -->
+        <div class="absolute top-1/4 left-1/10 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl -z-10"></div>
+        <div class="absolute bottom-1/4 right-1/10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -z-10"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Content -->
+                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        새로운 도전을 즐기는 풀스택 개발자
+                    </span>
+                    
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
+                        안녕하세요,<br class="hidden sm:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-emerald-400">김여름</span>입니다.
+                    </h1>
+                    
+                    <p class="text-xl sm:text-2xl text-slate-600 dark:text-slate-400 h-10">
+                        저는 <span id="typing-text" class="typing-cursor font-semibold text-slate-800 dark:text-slate-200"></span>
+                    </p>
+                    
+                    <p class="text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        사용자 관점에서 생각하고 효율적인 아키텍처를 설계하는 것에 보람을 느낍니다. 
+                        문제를 시각화하여 해결책을 도출하고, 고품질의 클린 코드를 지향합니다.
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#projects" class="px-6 py-3.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold transition-all shadow-lg shadow-primary-500/20 hover:shadow-primary-600/30 transform hover:-translate-y-0.5">
+                            프로젝트 보기
+                        </a>
+                        <a href="#contact" class="px-6 py-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all transform hover:-translate-y-0.5">
+                            커넥트 제안하기
+                        </a>
+                    </div>
+                    
+                    <!-- Social Links -->
+                    <div class="flex justify-center lg:justify-start space-x-5 pt-4 text-2xl text-slate-400 dark:text-slate-500">
+                        <a href="#" class="hover:text-primary-600 dark:hover:text-primary-500 transition-colors" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a href="#" class="hover:text-primary-600 dark:hover:text-primary-500 transition-colors" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" class="hover:text-primary-600 dark:hover:text-primary-500 transition-colors" title="Blog"><i class="fa-solid fa-square-rss"></i></a>
+                    </div>
+                </div>
+
+                <!-- Right Visual/Profile -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
+                        <!-- Background glow and spinning borders -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-primary-500 to-emerald-400 rounded-3xl rotate-6 opacity-30 blur-lg animate-pulse"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-500 to-indigo-500 rounded-3xl -rotate-3 transition-transform duration-500 hover:rotate-3">
+                            <!-- Inner profile picture container -->
+                            <div class="absolute inset-[3px] bg-slate-900 rounded-[21px] overflow-hidden flex flex-col justify-center items-center text-center p-8">
+                                <img src="https://placehold.co/400x400/1e1b4b/ffffff?text=DOHYUN" alt="Profile Image" class="w-28 h-28 rounded-full border-4 border-primary-500 shadow-xl object-cover mb-4" onerror="this.src='https://placehold.co/150'">
+                                <h3 class="text-xl font-bold text-white mb-1">Dohyun Kim</h3>
+                                <p class="text-sm text-primary-400 mb-4">Seoul, South Korea</p>
+                                <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-xs text-slate-400 text-left">
+                                    <span><i class="fa-regular fa-envelope text-primary-400 mr-1.5"></i> dev@dohyun.com</span>
+                                    <span><i class="fa-solid fa-cake-candles text-primary-400 mr-1.5"></i> 1996.11</span>
+                                    <span><i class="fa-solid fa-terminal text-primary-400 mr-1.5"></i> 3+ Years Exp.</span>
+                                    <span><i class="fa-solid fa-graduation-cap text-primary-400 mr-1.5"></i> CS Major</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-base text-primary-600 dark:text-primary-500 font-semibold uppercase tracking-wider">About Me</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    성장과 가치를 더하는 엔지니어
+                </p>
+                <div class="w-12 h-1 bg-primary-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Core Values Cards -->
+                <div class="p-8 rounded-2xl bg-slate-50 dark:bg-darkCard hover:scale-105 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+                    <div class="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-900 dark:text-white">문제 해결 중심</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                        기술을 위한 기술이 아닌 비즈니스 가치를 극대화하기 위한 현실적인 기술 옵션과 대안을 찾고 설계합니다.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl bg-slate-50 dark:bg-darkCard hover:scale-105 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-arrows-spin"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-900 dark:text-white">지속 가능한 개발</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                        팀과 미래의 나를 위한 클린 코드 작성과 문서화, 자동화 테스트 및 CI/CD 파이프라인 정착에 진심입니다.
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-2xl bg-slate-50 dark:bg-darkCard hover:scale-105 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl mb-6">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-slate-900 dark:text-white">투명한 협업</h3>
+                    <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                        기획자, 디자이너 등 타 직군과의 원활한 소통을 위해 기술적 용어를 비유와 시각화로 쉽게 소통합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-slate-50 dark:bg-darkBg transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-base text-primary-600 dark:text-primary-500 font-semibold uppercase tracking-wider">Skills</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    보유 기술 및 전문성
+                </p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">사용 빈도와 이해도를 기준으로 시각화하였습니다.</p>
+                <div class="w-12 h-1 bg-primary-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Frontend Technical Skills -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold flex items-center gap-2 mb-6">
+                        <i class="fa-solid fa-laptop-code text-primary-600"></i> Frontend Development
+                    </h3>
+                    
+                    <!-- Progress Item 1 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>React / Next.js</span>
+                            <span class="text-primary-600 dark:text-primary-400">90%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary-500 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Item 2 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>TypeScript</span>
+                            <span class="text-primary-600 dark:text-primary-400">85%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary-500 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Item 3 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>Tailwind CSS & Styled Components</span>
+                            <span class="text-primary-600 dark:text-primary-400">95%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary-500 rounded-full" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend & Cloud Skills -->
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold flex items-center gap-2 mb-6">
+                        <i class="fa-solid fa-server text-emerald-600"></i> Backend & DevOps
+                    </h3>
+                    
+                    <!-- Progress Item 1 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>Node.js / Express / NestJS</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">80%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: 80%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Item 2 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>MySQL & MongoDB</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">75%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Item 3 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between font-medium">
+                            <span>AWS (S3, EC2, Lambda) & Docker</span>
+                            <span class="text-emerald-600 dark:text-emerald-400">70%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tool & Stack Grid -->
+            <div class="mt-16 pt-10 border-t border-slate-200 dark:border-slate-800">
+                <h4 class="text-lg font-bold text-center mb-6">이 외에도 유연하게 다룰 수 있는 도구들</h4>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm flex items-center gap-1.5">
+                        <i class="fa-brands fa-git-alt text-orange-600"></i> Git & GitHub
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm flex items-center gap-1.5">
+                        <i class="fa-brands fa-figma text-purple-500"></i> Figma
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm flex items-center gap-1.5">
+                        <i class="fa-brands fa-slack text-amber-500"></i> Slack
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm flex items-center gap-1.5">
+                        <i class="fa-brands fa-python text-blue-500"></i> Python
+                    </span>
+                    <span class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-medium shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud-bolt text-indigo-500"></i> RESTful API
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-base text-primary-600 dark:text-primary-500 font-semibold uppercase tracking-wider">My Portfolio</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    주요 프로젝트
+                </p>
+                <div class="w-12 h-1 bg-primary-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex justify-center space-x-2 sm:space-x-4 mb-10">
+                <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold border-2 transition-all duration-200 bg-primary-600 border-primary-600 text-white" data-filter="all">전체</button>
+                <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 text-slate-600 dark:text-slate-300 transition-all duration-200" data-filter="dev">개발</button>
+                <button class="filter-btn px-5 py-2 rounded-xl text-sm font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 text-slate-600 dark:text-slate-300 transition-all duration-200" data-filter="design">기획/디자인</button>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+                
+                <!-- Project 1 (Dev) -->
+                <div class="project-card bg-slate-50 dark:bg-darkCard rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-category="dev">
+                    <div class="relative overflow-hidden h-48 bg-slate-900">
+                        <img src="https://placehold.co/600x400/1e293b/ffffff?text=Task+Manager" alt="Project Image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-primary-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md">Development</span>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-primary-500 transition-colors">협업 툴 'TaskSpace'</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mb-4 line-clamp-2">
+                                팀원 간 드래그 앤 드롭 형태의 칸반보드 및 실시간 동시 수정이 가능한 업무 협업 협업 툴입니다.
+                            </p>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">React</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Socket.io</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Node.js</span>
+                            </div>
+                            <button class="w-full py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm transition-all flex items-center justify-center gap-1.5" onclick="openProjectModal('taskspace')">
+                                상세보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 (Dev) -->
+                <div class="project-card bg-slate-50 dark:bg-darkCard rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-category="dev">
+                    <div class="relative overflow-hidden h-48 bg-slate-900">
+                        <img src="https://placehold.co/600x400/0f172a/ffffff?text=E-Commerce+API" alt="Project Image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-primary-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md">Development</span>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-primary-500 transition-colors">쇼핑몰 백엔드 엔진</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mb-4 line-clamp-2">
+                                대규모 트래픽 처리를 대응하기 위한 분산 캐시 레이어 및 대기열 로직이 내장된 이커머스 백엔드 API입니다.
+                            </p>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">NestJS</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Redis</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Docker</span>
+                            </div>
+                            <button class="w-full py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm transition-all flex items-center justify-center gap-1.5" onclick="openProjectModal('e-commerce')">
+                                상세보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 (Design) -->
+                <div class="project-card bg-slate-50 dark:bg-darkCard rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col" data-category="design">
+                    <div class="relative overflow-hidden h-48 bg-slate-900">
+                        <img src="https://placehold.co/600x400/312e81/ffffff?text=Design+System" alt="Project Image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <span class="absolute top-4 left-4 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md">Design</span>
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-primary-500 transition-colors">공용 디자인 시스템 구축</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mb-4 line-clamp-2">
+                                피그마를 통하여 일관성 있는 컴포넌트 라이브러리 및 자산 관리를 실현하여 디자이너-개발자 협업 시간을 혁신적으로 개선하였습니다.
+                            </p>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Figma</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">DesignToken</span>
+                                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">UI/UX</span>
+                            </div>
+                            <button class="w-full py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-primary-600 hover:text-white dark:hover:bg-primary-600 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm transition-all flex items-center justify-center gap-1.5" onclick="openProjectModal('design-system')">
+                                상세보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="py-20 bg-slate-50 dark:bg-darkBg transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-base text-primary-600 dark:text-primary-500 font-semibold uppercase tracking-wider">Experience & Education</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    학력 및 경력 타임라인
+                </p>
+                <div class="w-12 h-1 bg-primary-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="relative max-w-3xl mx-auto pl-6 sm:pl-0">
+                <!-- Center timeline vertical line (Desktop only) -->
+                <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-slate-200 dark:bg-slate-800"></div>
+                <!-- Mobile vertical line -->
+                <div class="sm:hidden absolute left-3.5 top-0 h-full w-0.5 bg-slate-200 dark:bg-slate-800"></div>
+
+                <!-- Timeline Item 1 -->
+                <div class="relative mb-12 sm:mb-16">
+                    <div class="flex flex-col sm:flex-row items-center">
+                        <div class="flex justify-start sm:justify-end sm:w-1/2 sm:pr-8 w-full pl-8 sm:pl-0">
+                            <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm w-full">
+                                <span class="text-xs font-bold text-primary-600 dark:text-primary-400">2024.03 - 현재</span>
+                                <h3 class="text-lg font-bold mt-1 text-slate-900 dark:text-white">시너지소프트웨어</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">풀스택 소프트웨어 엔지니어</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                                    사내 프로젝트의 프론트엔드 및 데이터 파이프라인 전담 개발. 렌더링 최적화를 통하여 로딩 시간을 대폭 감소시켰습니다.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Central Icon dot -->
+                        <div class="absolute left-0 sm:left-1/2 transform sm:-translate-x-1/2 w-8 h-8 rounded-full bg-primary-500 border-4 border-slate-50 dark:border-darkBg flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="relative mb-12 sm:mb-16">
+                    <div class="flex flex-col sm:flex-row-reverse items-center">
+                        <div class="flex justify-start sm:w-1/2 sm:pl-8 w-full pl-8 sm:pl-0">
+                            <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm w-full">
+                                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">2023.01 - 2024.01</span>
+                                <h3 class="text-lg font-bold mt-1 text-slate-900 dark:text-white">크리에이티브네트웍스</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">프론트엔드 인턴 및 주니어 개발자</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                                    UI 컴포넌트 라이브러리 제작 및 반응형 랜딩 페이지 다수 제작. 효율적인 상태관리 패턴 설계 도입.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Central Icon dot -->
+                        <div class="absolute left-0 sm:left-1/2 transform sm:-translate-x-1/2 w-8 h-8 rounded-full bg-emerald-500 border-4 border-slate-50 dark:border-darkBg flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="relative">
+                    <div class="flex flex-col sm:flex-row items-center">
+                        <div class="flex justify-start sm:justify-end sm:w-1/2 sm:pr-8 w-full pl-8 sm:pl-0">
+                            <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm w-full">
+                                <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">2018.03 - 2023.02</span>
+                                <h3 class="text-lg font-bold mt-1 text-slate-900 dark:text-white">한국과학대학교</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">컴퓨터공학과 졸업</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                                    컴퓨터 네트워크, 운영체제, 알고리즘 및 시스템 프로그래밍 최우수 학위 졸업. 캡스톤 디자인 금상 수상.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Central Icon dot -->
+                        <div class="absolute left-0 sm:left-1/2 transform sm:-translate-x-1/2 w-8 h-8 rounded-full bg-indigo-500 border-4 border-slate-50 dark:border-darkBg flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Left Details -->
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-base text-primary-600 dark:text-primary-500 font-semibold uppercase tracking-wider block">Contact</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                        함께 멋진 가치를 만들어 갈 기회를 기다립니다.
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed text-base">
+                        새로운 프로젝트 제안, 협업, 채용 문의 등 어떤 이야기든 환영합니다. 아래 폼이나 이메일 주소로 편하게 메시지를 전해주세요. 24시간 내에 성심껏 답변 드리겠습니다.
+                    </p>
+
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 flex items-center justify-center text-lg">
+                                <i class="fa-regular fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">이메일 주소</h4>
+                                <p class="font-semibold text-slate-800 dark:text-slate-200">dev@dohyun.com</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">근무 희망 위치</h4>
+                                <p class="font-semibold text-slate-800 dark:text-slate-200">서울특별시 / 원격 근무 가능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Form Contact Card -->
+                <div class="lg:col-span-7">
+                    <div class="bg-slate-50 dark:bg-darkCard p-8 rounded-2xl border border-slate-150 dark:border-slate-800 shadow-md">
+                        <form id="contactForm" class="space-y-6" onsubmit="handleContactSubmit(event)">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label for="name" class="text-sm font-semibold text-slate-700 dark:text-slate-300">성함 / 기업명</label>
+                                    <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 text-sm transition-colors" placeholder="홍길동">
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="email" class="text-sm font-semibold text-slate-700 dark:text-slate-300">회신 이메일</label>
+                                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 text-sm transition-colors" placeholder="gildong@company.com">
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label for="subject" class="text-sm font-semibold text-slate-700 dark:text-slate-300">제목</label>
+                                <input type="text" id="subject" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 text-sm transition-colors" placeholder="프로젝트 협업 문의 건">
+                            </div>
+                            <div class="space-y-2">
+                                <label for="message" class="text-sm font-semibold text-slate-700 dark:text-slate-300">내용</label>
+                                <textarea id="message" rows="5" required class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 text-sm transition-colors resize-none" placeholder="여기에 문의 세부 사항을 기재해주세요..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-4 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                                <i class="fa-regular fa-paper-plane"></i> 이메일 메시지 보내기
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-900 py-12 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="text-center sm:text-left">
+                <p class="font-bold text-lg text-primary-600 dark:text-primary-500 mb-1">Dohyun Kim</p>
+                <p class="text-xs text-slate-500">© 2026 Dohyun Kim. All rights reserved.</p>
+            </div>
+            
+            <div class="flex items-center space-x-6 text-sm">
+                <a href="#about" class="text-slate-500 hover:text-primary-500 transition-colors">소개</a>
+                <a href="#skills" class="text-slate-500 hover:text-primary-500 transition-colors">스택</a>
+                <a href="#projects" class="text-slate-500 hover:text-primary-500 transition-colors">포트폴리오</a>
+                <a href="#contact" class="text-slate-500 hover:text-primary-500 transition-colors">연락처</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Project Details Modal -->
+    <div id="projectModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-darkCard rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div class="sticky top-0 right-0 p-4 flex justify-between items-center border-b border-slate-150 dark:border-slate-800 bg-white/90 dark:bg-darkCard/90 backdrop-blur-md">
+                <h3 id="modalTitle" class="text-2xl font-bold text-slate-900 dark:text-white">프로젝트 제목</h3>
+                <button onclick="closeProjectModal()" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-6">
+                <img id="modalImage" src="" alt="Project Preview" class="w-full h-64 object-cover rounded-2xl bg-slate-100">
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-xs font-bold text-primary-500 uppercase tracking-widest mb-1">프로젝트 핵심 개요</h4>
+                        <p id="modalDescription" class="text-slate-700 dark:text-slate-300 leading-relaxed text-sm"></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-1">수행 성과 / 하이라이트</h4>
+                            <ul id="modalImpact" class="list-disc pl-5 space-y-1 text-xs text-slate-600 dark:text-slate-400"></ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-1">상세 기술 및 구성</h4>
+                            <ul id="modalTech" class="list-disc pl-5 space-y-1 text-xs text-slate-600 dark:text-slate-400"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <a id="modalGithubLink" href="#" target="_blank" class="flex-1 py-3 text-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-github"></i> Repository
+                    </a>
+                    <a id="modalLiveLink" href="#" target="_blank" class="flex-1 py-3 text-center rounded-xl bg-primary-600 text-white font-bold text-sm hover:bg-primary-700 transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Floating Toast Notification container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        // Project Data for Modals
+        const projectData = {
+            'taskspace': {
+                title: "협업 툴 'TaskSpace'",
+                image: "https://placehold.co/600x400/1e293b/ffffff?text=TaskSpace+Detail",
+                description: "조직 내의 비동기적 협업과 민첩한 작업을 지원하는 웹 어플리케이션입니다. 드래그앤드롭 기법을 도입하여 직관적인 태스크 컨트롤러를 설계하였으며, 실시간 알림 기능 및 타임라인 워크차트를 실감 나게 구현하였습니다.",
+                impact: [
+                    "팀 생산성 측정 속도 20% 향상",
+                    "실시간 동시 편집 충돌율 95% 감소",
+                    "초기 로딩 리소스 최적화 (25% 경량화)"
+                ],
+                tech: [
+                    "React 18 & TypeScript",
+                    "Redux-Toolkit & Socket.io",
+                    "Tailwind CSS & Framer Motion",
+                    "Express / MongoDB"
+                ],
+                github: "https://github.com",
+                live: "https://google.com"
+            },
+            'e-commerce': {
+                title: "쇼핑몰 백엔드 엔진",
+                image: "https://placehold.co/600x400/0f172a/ffffff?text=API+Engine+Detail",
+                description: "초당 수천 개의 트랜잭션과 선착순 세일 기간의 트래픽 급증을 제어하기 위해 개발된 전용 마이크로서비스 엔진입니다. 동시성 보장을 위해 Redis 분산 락을 설계하고 구조화된 예외 필터 계층을 적용하였습니다.",
+                impact: [
+                    "분산 락을 통한 재고 소진 정밀 제어 (100% 보장)",
+                    "평균 API 지연 시간 120ms 이하로 단축",
+                    "자동화 헬스체크 구현을 통한 안정적인 서버 모니터링"
+                ],
+                tech: [
+                    "NestJS & TypeScript",
+                    "Redis & Prisma ORM",
+                    "Docker & PostgreSQL",
+                    "Jest (Unit/Integration Test)"
+                ],
+                github: "https://github.com",
+                live: "https://google.com"
+            },
+            'design-system': {
+                title: "공용 디자인 시스템 구축",
+                image: "https://placehold.co/600x400/312e81/ffffff?text=Design+System+Detail",
+                description: "프론트엔드 개발자와 UI 디자이너 간의 불필요한 마크업 및 피드백 낭비를 해소하기 위해 통합 토큰(Token) 디자인 컴포넌트 라이브러리를 구축했습니다. 피그마에서 정의한 프리셋을 JSON으로 자동 매핑하는 파이프라인을 지원합니다.",
+                impact: [
+                    "초기 페이지 컴포넌트 코딩 시간 45% 단축",
+                    "브랜드 리브랜딩 컬러 적용 소요 시간 (3일 -> 1시간 단축)",
+                    "다크모드 완벽 호환 시스템 표준안 구축"
+                ],
+                tech: [
+                    "Figma & Tokens Studio",
+                    "CSS Custom Properties",
+                    "Storybook Utility",
+                    "Tailwind Framework"
+                ],
+                github: "https://github.com",
+                live: "https://google.com"
+            }
+        };
+
+        // Dark Mode Controller
+        const themeToggleBtn = document.getElementById('themeToggle');
+        
+        // Load initial theme from localStorage or system prefers
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                showToast('라이트 모드로 전환되었습니다.', 'sun');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                showToast('다크 모드로 전환되었습니다.', 'moon');
+            }
+        });
+
+        // Mobile Menu Toggling
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.className = 'fa-solid fa-bars text-lg';
+            } else {
+                menuIcon.className = 'fa-solid fa-xmark text-lg';
+            }
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.className = 'fa-solid fa-bars text-lg';
+            });
+        });
+
+        // Typing Effect Configuration
+        const typingStrings = [
+            "도전을 멈추지 않는 개발자입니다.",
+            "클린 코드와 협업을 지향합니다.",
+            "직관적이고 매끄러운 UX를 고민합니다."
+        ];
+        let stringIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const delayBetweenStrings = 2000;
+        const typingElement = document.getElementById('typing-text');
+
+        function runTypingEffect() {
+            const currentString = typingStrings[stringIndex];
+            
+            if (isDeleting) {
+                // Delete character
+                typingElement.textContent = currentString.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                // Type character
+                typingElement.textContent = currentString.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentString.length) {
+                // Done typing current string, pause and then delete
+                isDeleting = true;
+                setTimeout(runTypingEffect, delayBetweenStrings);
+            } else if (isDeleting && charIndex === 0) {
+                // Done deleting, go to next string
+                isDeleting = false;
+                stringIndex = (stringIndex + 1) % typingStrings.length;
+                setTimeout(runTypingEffect, 500);
+            } else {
+                // Continue typing/deleting
+                setTimeout(runTypingEffect, isDeleting ? deletingSpeed : typingSpeed);
+            }
+        }
+
+        // Initialize typing effect on window load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTypingEffect, 1000);
+        });
+
+        // Projects Filter Controller
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => {
+                    b.className = 'filter-btn px-5 py-2 rounded-xl text-sm font-semibold border-2 border-slate-200 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-500 text-slate-600 dark:text-slate-300 transition-all duration-200';
+                });
+                
+                // Add active style to selected button
+                btn.className = 'filter-btn px-5 py-2 rounded-xl text-sm font-semibold border-2 transition-all duration-200 bg-primary-600 border-primary-600 text-white';
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                projectCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'flex';
+                        card.classList.add('animate-in', 'fade-in', 'duration-300');
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Modal Handlers
+        const projectModal = document.getElementById('projectModal');
+        
+        function openProjectModal(projectId) {
+            const data = projectData[projectId];
+            if (!data) return;
+
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalImage').src = data.image;
+            document.getElementById('modalDescription').textContent = data.description;
+            
+            // Impact List
+            const impactContainer = document.getElementById('modalImpact');
+            impactContainer.innerHTML = '';
+            data.impact.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                impactContainer.appendChild(li);
+            });
+
+            // Tech List
+            const techContainer = document.getElementById('modalTech');
+            techContainer.innerHTML = '';
+            data.tech.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                techContainer.appendChild(li);
+            });
+
+            document.getElementById('modalGithubLink').href = data.github;
+            document.getElementById('modalLiveLink').href = data.live;
+
+            projectModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Lock background scroll
+        }
+
+        function closeProjectModal() {
+            projectModal.classList.add('hidden');
+            document.body.style.overflow = ''; // Unlock scroll
+        }
+
+        // Close modal when clicking outside contents
+        projectModal.addEventListener('click', (e) => {
+            if (e.target === projectModal) {
+                closeProjectModal();
+            }
+        });
+
+        // Escape Key close
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProjectModal();
+            }
+        });
+
+        // Custom Toast Notifications
+        function showToast(message, iconName = 'circle-check') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            toast.className = 'flex items-center gap-3 px-5 py-3.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-2xl shadow-2xl pointer-events-auto animate-in slide-in-from-bottom duration-300';
+            toast.innerHTML = `
+                <i class="fa-solid fa-${iconName} text-primary-500"></i>
+                <span class="text-xs font-bold font-sans">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+
+            // Remove after 3.5 seconds
+            setTimeout(() => {
+                toast.classList.replace('animate-in', 'animate-out');
+                toast.classList.add('fade-out', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3500);
+        }
+
+        // Form Submission Logic
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Simple validation representation
+            if (name && email && subject && message) {
+                // Show Success Toast Instead of Alert
+                showToast(`${name}님, 소중한 메시지가 정상적으로 전송되었습니다!`, 'paper-plane');
+                
+                // Clear Form Fields
+                document.getElementById('contactForm').reset();
+            } else {
+                showToast('모든 입력란을 올바르게 기입해 주세요.', 'circle-exclamation');
+            }
+        }
+
+        // Active scrollspy to dynamic update navbar highlight link
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 120; // offset adjustment
+                if (scrollPos >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-primary-600', 'dark:text-primary-500', 'border-b-2', 'border-primary-500');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('text-primary-600', 'dark:text-primary-500');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
