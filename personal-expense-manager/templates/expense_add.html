@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>지출 등록</title>
+
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <h1>개인 지출 관리</h1>
+
+        <nav>
+            <a href="dashboard.html">대시보드</a>
+            <a href="expense_add.html">지출 등록</a>
+            <a href="expense_list.html">지출 목록</a>
+        </nav>
+
+    </div>
+</header>
+
+
+<main class="container">
+
+    <div class="page-header">
+
+        <div>
+            <h2>지출 등록</h2>
+            <p>새로운 지출 내역을 입력합니다.</p>
+        </div>
+
+    </div>
+
+
+    <section class="panel">
+
+        <form method="POST" action="/expense_add.html">
+
+            <div class="form-group">
+                <label for="date">날짜</label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="category">카테고리</label>
+
+                <input
+                    type="text"
+                    id="category"
+                    name="category"
+                    placeholder="예: 식비"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="description">내용</label>
+
+                <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    placeholder="예: 점심"
+                    required
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="amount">금액</label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    placeholder="예: 12000"
+                    min="1"
+                    required
+                >
+            </div>
+
+
+            <div class="form-actions">
+
+                <a href="dashboard.html" class="button-secondary">
+                    취소
+                </a>
+
+                <button type="submit" class="button">
+                    저장
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>

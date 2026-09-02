@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>개인 지출 관리</title>
+
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <h1>개인 지출 관리</h1>
+
+        <nav>
+            <a href="dashboard.html">대시보드</a>
+            <a href="expense_add.html">지출 등록</a>
+            <a href="expense_list.html">지출 목록</a>
+        </nav>
+    </div>
+</header>
+
+
+<main class="container">
+
+    <div class="page-header">
+        <div>
+            <h2>대시보드</h2>
+            <p>나의 지출 현황을 한눈에 확인합니다.</p>
+        </div>
+
+        <a href="expense_add.html" class="button">
+            + 지출 등록
+        </a>
+    </div>
+
+
+    <section class="summary-grid">
+
+        <div class="summary-card">
+            <span>전체 지출</span>
+            <strong>{{ "{:,}".format(total) }}원</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>지출 건수</span>
+            <strong>{{ count }}건</strong>
+        </div>
+
+        <div class="summary-card">
+            <span>가장 큰 지출</span>
+            <strong>{{ "{:,}".format(max_amount) }}원</strong>
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <h3>카테고리별 지출</h3>
+            <section class="panel">
+
+                <h3>카테고리별 지출 순위</h3>
+
+                <img
+                    src="{{ url_for('static', filename='category_chart.png') }}"
+                    alt="카테고리별 지출 그래프"
+                    style="width: 100%;"
+        >
+
+            </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>카테고리</th>
+                    <th class="text-right">합계</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for category, amount in category_totals.items() %}
+
+                <tr>
+                    <td>{{ category }}</td>
+                    <td class="text-right">
+                        {{ "{:,}".format(amount) }}원
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-header">
+            <h3>최근 지출</h3>
+
+            <a href="expense_list.html">
+                전체 보기
+            </a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>날짜</th>
+                    <th>카테고리</th>
+                    <th>내용</th>
+                    <th class="text-right">금액</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>2026-08-01</td>
+                    <td>식비</td>
+                    <td>점심</td>
+                    <td class="text-right">12,000원</td>
+                </tr>
+
+                <tr>
+                    <td>2026-08-01</td>
+                    <td>교통</td>
+                    <td>버스</td>
+                    <td class="text-right">1,500원</td>
+                </tr>
+
+                <tr>
+                    <td>2026-08-02</td>
+                    <td>카페</td>
+                    <td>커피</td>
+                    <td class="text-right">4,800원</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+</main>
+
+</body>
+</html>
