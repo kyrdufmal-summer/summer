@@ -64,5 +64,5 @@
   <text x="1195" y="790" text-anchor="middle" class="txt">Webhook · 재조회 · Retry · 배치 · 대사</text>
   <text x="1195" y="825" text-anchor="middle" class="small">필요 시 내부 DB 보정 / PG 취소 API 호출</text>
 
-  <text x="800" y="940" text-anchor="middle" class="small">정민님: 내부 처리는 DB 트랜잭션, 외부 PG는 별도 처리 · 교수님: 미확정 건은 재조회/배치/대사로 최종 정합성 확보</text>
+  <text x="800" y="940" text-anchor="middle" class="small">실무 관점: 내부 처리는 DB 트랜잭션, 외부 PG는 별도 처리 · 수업 관점: 미확정 건은 재조회/배치/대사로 최종 정합성 확보</text>
 </svg>
