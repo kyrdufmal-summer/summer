@@ -490,3 +490,542 @@ WEBHOOK_URL=***
 ~~~
 
 실제 값은 .env, 운영 환경변수 또는 별도의 Secret 관리도구에서 관리하고 Git에 커밋하지 않는다.
+
+
+---
+
+# Part 5. 관계(Relationship) 데이터를 실무 문제 해결에 쓰는 법
+
+## 24. 왜 행과 열만 보면 부족한가
+
+관계형 데이터베이스는 주문, 회원, 결제, 수강신청처럼 정형 업무를 안정적으로 처리하는 데 강하다. 하지만 실제 사고와 VOC는 한 테이블 안에서만 발생하지 않는다.
+
+~~~text
+사람
+↔ 전화번호
+↔ 기기
+↔ IP
+↔ 계좌
+↔ 송금
+↔ 피해자
+↔ 상담기록
+~~~
+
+따라서 실무에서 중요한 질문은 '이 전화번호의 속성은 무엇인가?'보다 '이 전화번호가 어떤 사람·기기·계좌·이벤트와 연결되어 있고, 그 연결 구조가 정상 사용자와 어떻게 다른가?'에 가깝다.
+
+Palantir Foundry의 Ontology도 현실 세계의 개체를 Object, 연결을 Relation/Link, 업무 변화를 Action으로 표현해 분석을 운영 의사결정과 실제 Action으로 연결한다.
+
+참고: https://www.palantir.com/explore/platforms/foundry/ontology/
+
+---
+
+## 25. 예시: 보이스피싱 네트워크를 관계로 조사하기
+
+![관계로 보는 피싱 네트워크](./images/2026-09-26_관계데이터_피싱네트워크.svg)
+
+다음은 관계 분석 구조를 설명하기 위한 가상 사례다.
+
+처음 신고는 서로 관련 없어 보인다.
+
+~~~text
+피해자 A → 전화번호 A → 300만원 송금
+피해자 B → 전화번호 B → 120만원 송금
+피해자 C → 전화번호 C → 700만원 송금
+~~~
+
+전화번호만 보면 서로 다른 사건이다. 그러나 관계를 이어 보면 다음과 같은 공통점이 나올 수 있다.
+
+~~~text
+전화번호 A → Device X → 계좌 111
+전화번호 B → Device X → 계좌 222
+전화번호 C → Device Y → 계좌 111
+Device X → IP 7
+Device Y → IP 7
+~~~
+
+이렇게 여러 피해 사건이 공통 기기·계좌·IP로 수렴하면 개별 사건이 아니라 하나의 네트워크로 조사할 수 있다. 연결수가 많거나 여러 하위 집단을 이어주는 전화번호·계좌·Device·IP는 조사 우선순위가 높은 중심 노드 후보가 된다.
+
+다만 중심성이 높다고 범죄 리더라고 단정하면 안 된다. 그래프 분석은 범죄자 판정기가 아니라 숨은 연결을 찾아 조사 우선순위를 만드는 도구다.
+
+FBI도 Money Mule이 피해자와 범죄자 사이에 여러 층을 추가해 자금추적을 어렵게 한다고 설명한다. 여러 계좌와 중간 전달자를 따라가는 관계 분석이 중요한 이유다.
+
+참고:
+- https://www.fbi.gov/how-we-can-help-you/common-frauds-and-scams/money-mules
+- https://www.fbi.gov/news/podcasts/inside-the-fbi-podcast-tech-support-scams
+- https://archives.fbi.gov/archives/news/stories/2010/october/cyber-banking-fraud/cyber-banking-fraud-graphic
+
+---
+
+## 26. RDBMS와 Graph DB는 경쟁이 아니라 역할 분담
+
+![RDBMS와 Graph DB 역할 분담](./images/2026-09-26_RDBMS_vs_Graph.svg)
+
+PostgreSQL이 잘하는 것:
+- 주문·회원·결제·정산
+- ACID Transaction
+- 제약조건
+- 정형 집계
+- Source of Truth 역할
+
+Graph/Ontology가 잘하는 것:
+- 사람→전화번호→계좌→Device→IP 같은 N-hop 탐색
+- 숨은 공통자원 탐지
+- Fraud Ring / Collusion 탐지
+- Community / Path / Centrality 분석
+- 조사 화면에서 관계 시각화
+
+실무 구조는 보통 다음처럼 가져갈 수 있다.
+
+~~~text
+Operational DB: PostgreSQL
+→ 거래와 상태의 Source of Truth
+
+ETL / CDC / Batch
+↓
+
+Relationship Layer: Graph / Ontology
+→ Object + Link + Event
+
+Analytics
+→ Risk Score / Centrality / Community
+
+Operations
+→ Alert / Case / Investigation / Action
+~~~
+
+Neo4j도 Fraud Detection 사례에서 단순 거래금액보다 공유 자산과 숨은 관계를 찾아 계정탈취·보험사기·사기 조직을 조사하는 활용을 제시한다.
+
+참고: https://neo4j.com/use-cases/fraud-detection/
+
+---
+
+## 27. Node보다 중요한 것은 Edge 설계
+
+Node 예시:
+- Person
+- Phone
+- Account
+- BankAccount
+- Device
+- IP
+- Address
+- Merchant
+- VOC
+- Transaction
+- LoginEvent
+
+Edge 예시:
+- Person USES_PHONE Phone
+- Person OWNS_ACCOUNT Account
+- Account LOGGED_IN_FROM Device
+- Device USES_IP IP
+- Phone CALLED Person
+- Transaction FROM BankAccount
+- Transaction TO BankAccount
+- VOC ABOUT Transaction
+
+Edge에도 속성이 필요하다.
+
+예를 들어 CALLED 관계에는 called_at, duration, count가 필요하고, TRANSFERRED_TO 관계에는 amount, transferred_at, channel 같은 값이 필요하다.
+
+누가 연결되어 있는가뿐 아니라 언제, 몇 번, 얼마만큼 연결되었는지가 위험도를 바꾼다.
+
+---
+
+## 28. Entity Resolution이 그래프보다 먼저다
+
+관계 분석에서 가장 어려운 전처리 중 하나는 '이 두 데이터가 같은 사람인가?'를 판단하는 일이다.
+
+시스템마다 전화번호 포맷, 이름, 주소, 이메일 표현이 다르면 같은 사람을 다른 사람으로 분리할 수 있다. 반대로 다른 사람을 하나로 합치면 정상 고객을 위험 네트워크에 잘못 묶는 False Positive가 발생한다.
+
+따라서 다음이 필요하다.
+- 전화번호·이메일 정규화
+- 주소 표준화
+- 식별정보 해시 매칭
+- Device Fingerprint
+- Rule 기반 매칭
+- Fuzzy Matching
+- Probabilistic Entity Resolution
+
+Entity Resolution 정확도가 관계 분석의 바닥 품질을 결정한다.
+
+---
+
+## 29. Data Scientist가 보는 주요 Graph Feature
+
+### Degree Centrality
+직접 연결 수를 본다. 피해자 42명과 연결된 전화번호, 여러 계정에서 공유되는 Device 같은 허브를 찾을 수 있다.
+
+### Betweenness Centrality
+서로 다른 집단 사이의 경로를 많이 연결하는 브리지 노드를 찾는다. 중간책·허브계좌·공통 관리자 계정 후보 탐지에 유용하다.
+
+### PageRank / Eigenvector 계열
+중요한 노드와 연결된 노드에 더 높은 가중치를 줄 수 있다. 단순 연결 수보다 이미 위험도가 높은 계좌나 Device와 반복 연결되는지를 볼 때 유용하다.
+
+### Connected Components
+전체 사건을 실제 연결된 독립 네트워크로 분리한다. 100건의 신고가 사실 7개 조직으로 묶일 수 있다.
+
+### Community Detection
+큰 네트워크 안에서 밀접하게 연결된 하위 그룹을 찾는다. 지역별·역할별 하위 조직이나 계좌군을 분리할 수 있다.
+
+### K-core / Dense Subgraph
+서로 촘촘하게 반복 연결되는 핵심 집단을 찾는다. 일회성 피해자보다 내부 운영계정·기기군을 구분하는 데 힌트가 된다.
+
+---
+
+## 30. 시간축을 넣어야 진짜 실무 데이터가 된다
+
+같은 관계라도 시간 순서가 다르면 의미가 달라진다.
+
+~~~text
+신규 계정 생성
+↓ 4분
+고액 입금
+↓ 30초
+다수 계좌 분산송금
+↓ 2분
+전액 출금
+~~~
+
+따라서 event_time, sequence, time_gap, frequency, amount_velocity 같은 Temporal Feature가 중요하다.
+
+관계 + 시간 + 금액을 함께 봐야 Fraud Network의 행동 패턴이 보인다.
+
+---
+
+## 31. 사례 비교
+
+### Case A. 보이스피싱 / Tech Support Scam
+피해자→전화번호→Device→IP→중간계좌→Money Mule→최종계좌의 흐름을 본다. 여러 피해자가 공통으로 접촉한 번호, 여러 사건 자금을 받는 Funnel Account, 여러 Mule을 이어주는 계좌를 조사한다.
+
+### Case B. 보험사기
+보험가입자↔병원↔정비업체↔손해사정인↔사고↔계좌를 연결한다. 단독 청구는 정상처럼 보여도 동일 병원·업체·전문가 조합이 반복되면 Collusion 가능성을 조사할 수 있다.
+
+### Case C. 계정탈취
+서로 무관해 보이는 Account A/B/C가 동일 Device X와 IP Y를 공유하면 공통 공격자 가능성을 조사한다. 신규 Device, 비밀번호 변경, MFA 실패, 고액 결제 같은 이벤트를 함께 본다.
+
+### Case D. 기업 VOC 네트워크
+VOC→상품→배포 Version→API→Server→담당팀을 연결한다. 예를 들어 환불 VOC가 Version 2.4.1 이후 payment-confirm API와 특정 PG Timeout에 집중된다면 고객 문제에서 기술 Root Cause까지 관계로 연결할 수 있다.
+
+---
+
+## 32. 분석을 실제 운영 Action으로 닫기
+
+![관계 분석 운영 흐름](./images/2026-09-26_관계분석_운영흐름.svg)
+
+~~~text
+Data Sources
+↓
+Entity Resolution
+↓
+Graph Build
+↓
+Feature / Rule / Model
+↓
+Alert
+↓
+Investigator Review
+↓
+Action
+↓
+Result Write-back
+↓
+Model / Rule 개선
+~~~
+
+Palantir의 Alerting Workflow도 우선순위 Alert를 사용자에게 제공하고, 사용자의 판단을 다시 데이터에 기록해 운영 시스템으로 이어가는 패턴을 설명한다.
+
+참고: https://www.palantir.com/docs/foundry/use-case-patterns/alerting-workflow
+
+---
+
+## 33. Alert에는 '왜 위험한지'가 보여야 한다
+
+나쁜 Alert는 Risk Score 92만 보여준다.
+
+좋은 Alert는 근거를 함께 보여준다.
+
+~~~text
+Risk Score: 92
+- 피해 신고 번호 8개와 연결
+- 24시간 내 신규계좌 5개에서 입금
+- 동일 Device에서 12개 계정 로그인
+- 3-hop 이내 기존 Fraud 계좌 4개 존재
+- 30분 내 자금 98% 재송금
+~~~
+
+Data Science는 Score를 만드는 것뿐 아니라 운영자가 Score의 근거를 이해하고 판단하도록 만드는 Explainability까지 포함해야 한다.
+
+---
+
+## 34. False Positive를 줄이는 방법
+
+공용 IP, 콜센터 대표번호, 회사 Wi-Fi, 대형 병원처럼 정상적으로 연결이 많은 허브가 존재한다.
+
+따라서 한 Feature만으로 위험을 결정하면 안 된다.
+
+~~~text
+공용 IP 단독
+= 약한 신호
+
+공용 IP
++ 신규 Device
++ 다수 계정
++ 고액결제
++ 짧은 시간
+= 강한 신호
+~~~
+
+운영자는 True Positive / False Positive / Need More Evidence를 기록해야 한다. 이 Feedback이 다음 Rule과 Model 개선 데이터가 된다.
+
+---
+
+## 35. VOC와 Relationship Intelligence를 결합하는 이유
+
+신생회사는 같은 Root Cause에서 나온 VOC를 서로 다른 카테고리로 나누어 집계하는 경우가 많다.
+
+관계로 보면:
+
+~~~text
+VOC A
+VOC B
+VOC C
+↓
+같은 Journey
+↓
+같은 API
+↓
+같은 Release
+↓
+같은 Server
+~~~
+
+처럼 표면상 다른 문의를 하나의 원인 네트워크로 묶을 수 있다.
+
+특히 다음 누수가 생긴다.
+- 전화상담·로그·결제·배포 데이터가 분리됨
+- 같은 고객이 시스템마다 다른 ID로 관리됨
+- 반복 VOC가 같은 Device/계좌/전화번호와 연결되는지 모름
+- 장애 종료 후 실제 고객 영향 범위를 연결하지 못함
+- 조사 결과가 Excel에만 남고 시스템에 Write-back되지 않음
+
+---
+
+## 36. IT영업에서 설명하는 법
+
+![IT영업 관계분석 제안 프레임](./images/2026-09-26_IT영업_관계분석_제안프레임.svg)
+
+고객에게 'Graph DB를 도입하세요'부터 말하면 안 된다. Business Pain부터 확인해야 한다.
+
+Discovery Questions:
+1. 사건 하나 조사할 때 몇 개 시스템과 엑셀을 오갑니까?
+2. 동일 고객·계좌·전화번호·Device가 여러 시스템에서 다른 ID로 관리됩니까?
+3. 건별 조사 후 같은 조직에서 나온 다른 사건까지 자동으로 연결됩니까?
+4. 반복 VOC가 같은 배포·API·서버와 연결되는지 자동으로 알 수 있습니까?
+5. Alert 후 담당자의 판단이 다시 데이터로 남습니까?
+
+제안의 KPI는 DB 구축 자체가 아니라 다음이어야 한다.
+- 평균 조사시간 감소
+- 사건당 확인 시스템 수 감소
+- Fraud Loss 감소
+- False Positive 감소
+- 반복 VOC 감소
+- Case Closure Time 감소
+- 탐지 후 Action까지 시간 감소
+
+---
+
+## 37. 고객사 PoC 설계 예시
+
+처음부터 전사 데이터를 통합하려 하지 말고 최근 3개월 의심건처럼 범위를 좁힌다.
+
+입력 데이터 예:
+- 전화번호
+- 고객
+- 계좌
+- 송금
+- Device
+- IP
+- VOC
+
+PoC 목표:
+1. 기존 건별 조사로 놓친 공통 Network 찾기
+2. 위험 Node Top N 도출
+3. 기존 확정 Fraud와 연결 정도 검증
+4. 조사시간 비교
+5. False Positive 확인
+
+영업 제안에서 중요한 것은 '그래프가 예쁘다'가 아니라 '조사시간이 몇 % 줄었고 손실금액을 얼마 줄일 수 있는가'다.
+
+---
+
+## 38. 데이터베이스 사이언티스트 관점의 전체 Pipeline
+
+~~~text
+Business Question
+↓
+Data Collection
+↓
+Data Quality
+↓
+Entity Resolution
+↓
+Graph Modeling
+↓
+Feature Engineering
+↓
+Rule + Model
+↓
+Explainability
+↓
+Human Review
+↓
+Action
+↓
+Feedback
+↓
+Monitoring
+~~~
+
+Feature 예:
+- Degree
+- Betweenness
+- Shared Asset Count
+- Transaction Velocity
+- Temporal Motif
+- Community ID
+- Fraud Neighbor Ratio
+
+---
+
+## 39. Accuracy 하나로 모델을 평가하면 안 된다
+
+Fraud가 0.1%라면 모든 거래를 정상이라고 예측해도 Accuracy는 99.9%가 될 수 있다. 하지만 Fraud는 하나도 잡지 못한다.
+
+따라서 Precision, Recall, F1, PR-AUC, False Positive Rate, Fraud Amount Recall, Loss Prevented, Investigation Cost를 함께 본다.
+
+운영 측면에서는 Alert 1,000건 중 실제 Fraud가 20건이라면 조사자가 감당하지 못할 수 있다. 모델 성능과 운영 처리용량을 함께 설계해야 한다.
+
+---
+
+## 40. 개인정보와 Governance
+
+관계 데이터는 여러 시스템을 합치면서 원래 보이지 않던 개인 행동 패턴을 드러낼 수 있기 때문에 더 강한 통제가 필요하다.
+
+필요 항목:
+- 최소수집
+- 목적 제한
+- PII Masking
+- Column/Row Level Security
+- Audit Log
+- Retention Policy
+- 암호화
+- 조사 목적 외 사용 제한
+- Model/Rule 변경 이력
+- Human Review
+
+관계 분석 결과만으로 자동 제재하기보다 고위험 결정은 사람 검토와 추가 증거를 포함하는 것이 안전하다.
+
+---
+
+## 41. 신생회사가 놓치기 쉬운 관계 데이터 누수
+
+1. 고객 ID가 시스템마다 다르다.
+2. 전화번호 포맷이 달라 같은 번호가 여러 엔터티가 된다.
+3. Device ID가 앱 재설치마다 바뀐다.
+4. NAT/공용 IP를 동일인으로 오인한다.
+5. Timestamp timezone이 다르다.
+6. 탈퇴 고객과 과거 거래 관계가 끊긴다.
+7. Fraud 확정 결과가 모델팀에 돌아가지 않는다.
+8. VOC와 Transaction ID가 연결되지 않는다.
+9. Release Version과 VOC가 연결되지 않는다.
+10. 관계의 유효 시점을 저장하지 않는다.
+11. Alert는 있지만 Owner가 없다.
+12. 조사 결과가 Excel에만 남는다.
+13. False Positive를 기록하지 않는다.
+14. Model Score는 있지만 이유가 없다.
+15. Graph를 만들었지만 Action이 없다.
+
+---
+
+## 42. 바로 영업·운영에 사용할 문장
+
+기술 담당자에게:
+'기존 PostgreSQL을 없애자는 제안이 아니라, 거래 DB 위에 Relationship Intelligence Layer를 만들어 JOIN만으로 찾기 어려운 N-hop 관계와 공통 자원을 조사 가능하게 하자는 제안입니다.'
+
+운영 담당자에게:
+'지금은 사건 10건을 10번 조사하지만, 관계를 연결하면 사실 하나의 조직에서 파생된 사건인지 먼저 볼 수 있습니다.'
+
+경영진에게:
+'목표는 Graph DB 구축이 아니라 조사시간·손실금액·반복 VOC·False Positive를 줄이는 것입니다.'
+
+데이터팀에게:
+'모델 Score만 주는 것이 아니라 Entity Resolution, Graph Feature, 조사자 Feedback까지 Closed Loop로 만들어야 합니다.'
+
+---
+
+## 43. 오늘의 고찰
+
+LEFT JOIN을 공부할 때 단순한 테이블 연결 문법으로만 보면 실무 확장이 어렵다. 본질은 서로 다른 엔터티 사이 관계를 데이터로 표현하는 것이다.
+
+~~~text
+1-hop 관계
+→ SQL JOIN
+
+여러 단계 관계
+→ Recursive Query / Graph Traversal
+
+관계 패턴
+→ Graph Analytics
+
+위험도 계산
+→ Data Science
+
+Alert
+→ Operations
+
+조사 결과
+→ Feedback
+
+Action
+→ Business Outcome
+~~~
+
+Palantir식 사고의 핵심도 특정 제품 하나가 아니라 현실 세계의 사람·자산·사건·관계를 데이터 객체로 만들고, 분석을 운영 Action으로 연결하는 것으로 이해할 수 있다.
+
+---
+
+## 44. 다음에 더 파고들 주제
+
+- PostgreSQL Recursive CTE로 2-hop / 3-hop 관계 찾기
+- Neo4j Cypher 기본 문법
+- Entity Resolution 실습
+- Degree / Betweenness 직접 계산
+- NetworkX Fraud Network 시각화
+- Community Detection
+- Temporal Graph
+- Graph Embedding
+- Graph Neural Network
+- VOC + Incident + Release Graph
+- Risk Alert 관리자 화면
+- Relationship Intelligence PoC 제안서
+
+---
+
+## 참고 자료
+
+1. Palantir Foundry Ontology — https://www.palantir.com/explore/platforms/foundry/ontology/
+2. Palantir Object/Link/Ontology Concepts — https://www.palantir.com/docs/foundry/getting-started/introductory-concepts
+3. Palantir Link Types — https://www.palantir.com/docs/foundry/object-link-types/link-types-overview
+4. Palantir Alerting Workflow — https://www.palantir.com/docs/foundry/use-case-patterns/alerting-workflow
+5. Palantir Financial Services Ontology Example — https://www.palantir.com/docs/foundry/use-case-examples/improving-retention-and-collection-performance-through-intelligent-repricing
+6. FBI Money Mules — https://www.fbi.gov/how-we-can-help-you/common-frauds-and-scams/money-mules
+7. FBI Tech Support Scam Networks — https://www.fbi.gov/news/podcasts/inside-the-fbi-podcast-tech-support-scams
+8. FBI Cyber Theft Ring — https://archives.fbi.gov/archives/news/stories/2010/october/cyber-banking-fraud/cyber-banking-fraud-graphic
+9. Neo4j Fraud Detection — https://neo4j.com/use-cases/fraud-detection/
+
+---
+
+## 오늘의 한 줄 정리
+
+> 데이터의 가치는 행 하나의 속성보다 사람·기기·계좌·전화번호·사건이 어떻게 연결되어 있는지를 보고, 그 관계를 실제 조사와 운영 Action으로 바꿀 때 더 커진다.
