@@ -334,6 +334,7 @@ uvicorn main:app --reload
 
 ## 14. 참고 자료 및 근거
 
+- 아토믹데브, 「Backend Overview — 전체 Fullstack 인프라와 FastAPI의 역할」(사용자가 원문 전문 제공): https://m.blog.naver.com/PostView.naver?blogId=dev-dog&logNo=224457456360&proxyReferer=&noTrackingCode=true
 - 제공된 **Phase 02 Backend Overview** 수업 화면: Frontend / Backend / PostgreSQL, Uvicorn·Pydantic·SQLAlchemy 학습 목표.
 - 제공된 **웹 요청 흐름 및 백엔드 구성요소** 수업 화면: Browser, Reverse Proxy, Router, Schema, Service, Repository, PostgreSQL.
 - 2026-10-29 학습 대화에서 정리한 Uvicorn 역할, 주문 사례, HTTP 요청 흐름 및 오류 위치.
@@ -343,4 +344,140 @@ uvicorn main:app --reload
 - SQLAlchemy 공식 문서: https://docs.sqlalchemy.org/
 - PostgreSQL 공식 문서: https://www.postgresql.org/docs/
 
-> **출처 경계:** 앞서 전달된 네이버 블로그 및 Google Drive 원문은 본문 확인이 되지 않아 인용하거나 그 내용을 읽은 것으로 기록하지 않았다. 위 실무 시나리오와 코드는 학습 목적의 가상 예제이며, 운영 시스템 실행·검증 증빙이 아니다.
+> **출처 경계:** 네이버 블로그 원문은 이후 사용자가 본문 전문을 제공하여 확인했다. Google Drive 파일의 별도 내용은 확인되지 않았다. 실무 시나리오와 코드는 학습용 가상 예제이며 실제 운영 실행·검증 증빙이 아니다.
+
+
+## 15. 원문 학습 보강 — 1차·2차·3차 교육과정이 하나의 서비스로 연결되는 이유
+
+출처: 아토믹데브(네이버 블로그), 「Backend Overview — 전체 Fullstack 인프라와 FastAPI의 역할」  
+원문: https://m.blog.naver.com/PostView.naver?blogId=dev-dog&logNo=224457456360&proxyReferer=&noTrackingCode=true  
+**출처 확인:** 2026-10-29 학습 대화에서 사용자가 원문 전문을 제공함. 아래는 핵심 사항을 재구성해 요약한 것으로 원문을 그대로 복제한 것이 아니다.
+
+| 교육 단계 | 핵심 작업 | 가상 기업 업무 사례 | 검증 질문 |
+|---|---|---|---|
+| 1차 HTML/CSS/JavaScript | 제공된 API를 `fetch()`로 호출 | 외부에 준비된 상품 목록 API로 상품 카드 렌더링 | API 오류 때 화면에 어떤 메시지를 보여줄까? |
+| 2차 FastAPI/Pydantic/PostgreSQL | API 계약을 직접 설계하고 구현 | `GET /members`, 주문 API, 데이터 검증·저장 | 실제 DB 데이터와 API 결과가 일치할까? |
+| 3차 TypeScript/React/Next.js | 동일한 API를 재사용하는 화면 제작 | 모바일 주문 페이지를 컴포넌트로 재구축 | 프론트엔드 교체 후에도 같은 API 계약을 지키는가? |
+
+**핵심:** React/Next.js로 화면을 바꿔도 백엔드 API의 Method/URL/입출력/오류 계약이 유지되면 동일한 API를 재사용할 수 있다. 단, 프론트엔드와 백엔드 배포 구조는 서비스마다 다를 수 있다.
+
+### HTTP 요청의 요소를 구체적으로 구분하기
+
+| 항목 | 예시 | 뜻 |
+|---|---|---|
+| HTTP Method | `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | 요청이 수행하려는 동작의 의미 |
+| Path Parameter | `GET /members/3`의 `3` | 특정 회원 자원 식별 |
+| Query Parameter | `GET /members?name=kim` | 검색·필터링 조건 |
+| Request Body | `{"name":"Kim"}` | 요청 본문 데이터 |
+| Schema/DTO | `MemberCreate`, `MemberResponse` | 입력·출력 데이터 구조의 약속 |
+| Validation | 양수·정수·필수 필드 확인 | 계약에 맞는 데이터인지 검사 |
+| Serialization | Python 객체 → JSON 표현 | API 응답으로 안전하게 변환 |
+| ORM | SQLAlchemy 모델과 세션 | 데이터베이스 작업을 객체와 연결 |
+
+특히 GET은 조회용 안전(safe) 메서드여야 한다. 실제 데이터를 변경하는 로직을 GET으로 구현하지 않는 것이 HTTP 설계 원칙이다.
+
+## 16. API Contract — 개발자와 AI의 책임을 분명히 하기
+
+바이브 코딩에서 AI가 코드를 빠르게 만들더라도 **개발자가 API 계약·민감정보 공개 범위·업무 규칙·완료 기준을 책임진다.**
+
+가상 회사 회원 조회 API를 아래처럼 계약한다고 가정한다.
+
+| 계약 항목 | 명세 |
+|---|---|
+| Method/URL | `GET /members/{member_id}` |
+| 입력 | `member_id`: 양의 정수 |
+| 성공 | `200` + `{"id":3,"display_name":"가상회원"}` |
+| 리소스 없음 | `404` + 정해진 오류 형식 |
+| 부적절한 입력 | `422` + 검증 오류 |
+| 출력 허용 필드 | `id`, `display_name`만 공개 |
+| 금지 필드 | 비밀번호 해시, 내부 인증 토큰, 개인정보 등 비공개 정보 |
+
+**Definition of Done (완료 기준):** Swagger에서 200/404/422 확인, 응답 필드 검사, 필요한 DB 데이터 일치 여부 검증, TestClient 회귀 테스트 통과, 로그에 민감정보 미노출 확인. 실제 수행 전에는 전부 ‘예정’으로 기록한다.
+
+### Pydantic과 ORM의 협력에서 자주 하는 오해
+
+1. Pydantic이 `member_id`를 정수로 검증한다고 **DB에 해당 회원이 존재하는 것은 아니다.** 존재 여부는 DB 조회 후 API 로직에서 확인한다.
+2. Pydantic의 `response_model`은 응답에 포함할 필드를 제한하는 데 도움을 주지만 **SQL SELECT 컬럼을 자동으로 최소화한다는 뜻은 아니다.**
+3. 요청 검증 오류는 일반적으로 422, 응답 모델 계약 위반은 서버 측 오류(보통 500)로 이어질 수 있다. 이 두 가지는 원인과 책임이 다르다.
+4. MyBatis의 SQL XML Mapper와 Pydantic은 다른 역할이다. Pydantic은 API DTO/검증에 가깝고 SQLAlchemy는 DB 접근에 가깝다.
+5. DB의 `FOREIGN KEY`와 `UNIQUE` 같은 제약조건은 Pydantic 검증을 보완한다. 애플리케이션 검증과 DB 무결성 검사는 함께 필요하다.
+
+## 17. AI 기반 개발 업무 절차 — 계약부터 증빙까지
+
+```text
+업무 요구사항 정의
+    ↓
+API Contract (Method / URL / Input / Output / Status / Error)
+    ↓
+Definition of Done (완료 기준)
+    ↓
+AI에게 구현 계획·코드·테스트 초안 요청
+    ↓
+개발자가 설계·권한·보안·업무 규칙 검토
+    ↓
+FastAPI + Pydantic + DB 구현
+    ↓
+Swagger / 로그 / 실제 DB / TestClient로 검증
+    ↓
+계약 위반 수정 및 회귀 테스트
+    ↓
+Git Commit / Push
+```
+
+**가상 회사의 코드 리뷰 사례:** AI가 회원 조회 코드에 내부 관리 필드까지 응답하도록 만들었다면, 성공 응답 200만 보고 승인하지 않는다. `response_model` 및 API 계약을 검토하고 허용된 필드만 외부에 노출되는지 시험한다. 필요한 경우 DB 쿼리의 SELECT 범위도 별도로 최적화한다.
+
+### 검증 증거의 수준
+
+- **최소:** Swagger에서 HTTP 상태와 응답을 직접 확인.
+- **강화:** TestClient로 성공·404·422·권한 실패 등 자동화된 테스트.
+- **DB 연계:** 테스트 데이터베이스에서 삽입·조회·롤백·제약조건을 확인.
+- **운영 관점:** 요청 ID 기반 로그, 장애 코드, 처리 시간, 배포/회귀 테스트 증거.
+
+**중요:** HTTP 200은 DB 영구 저장의 단독 증거가 아니다. 커밋, 데이터 조회, 트랜잭션 결과까지 확인해야 한다.
+
+## 18. 원문 15강 로드맵 — 업무능력으로 번역하기
+
+| 강 | 주제 | 회사 실무에서 해낼 작업 |
+|---|---|---|
+| 01 | 구조와 첫 FastAPI | 서버 실행, Swagger, `GET /members` |
+| 02 | Path/Query | 특정 회원 조회·검색 필터, 404/422 분기 |
+| 03 | Request Body/Pydantic | 회원 생성 요청의 필수값·타입 검사 |
+| 04 | Response Model/상태 코드 | 공개 필드·201·422 등 API 계약 확정 |
+| 05 | PostgreSQL/환경설정 | DB 연결, .env/비밀정보 분리 |
+| 06 | GET+SELECT | DB 조회 결과와 API 응답 대조 |
+| 07 | POST+INSERT/Transaction | 신규 데이터 저장, commit/rollback 검증 |
+| 08 | PUT/PATCH+UPDATE | 전체 수정과 부분 수정의 null 정책 구분 |
+| 09 | DELETE | 삭제 후 상태 및 204/404 응답 설계 |
+| 10 | Router/Service/Repository | 책임별 코드를 나누고 변경 영향을 관리 |
+| 11 | SQLAlchemy ORM | 모델·세션·관계 매핑 이해 |
+| 12 | ORM CRUD/Transaction | ORM 기반 DB 작업의 원자성 관리 |
+| 13 | 예외·로그·테스트 | 장애 재현·TestClient 회귀 검증 |
+| 14 | CORS/연동/보안 | 허용 Origin, 환경 분리, Secret 관리 |
+| 15 | AI 기반 미니프로젝트 | Contract → 구현 → DB → 테스트 → GitHub |
+
+**진행 상태:** 위 15개 강은 *학습 로드맵*이다. 이 TIL에서 전체 강의를 완료한 것으로 표시하지 않는다. 원문은 Chapter 01에서 파라미터 없는 `GET /members`를 먼저 배우고, Chapter 02~04에서 입력·출력 계약을 확장하며, Chapter 05부터 DB를 연결하도록 안내한다.
+
+## 19. 학습 확인 질문과 답
+
+**Q1. React로 화면을 교체해도 기존 FastAPI를 쓸 수 있나?**  
+A. 가능하다. React는 UI 기술이므로 기존 API 계약을 유지하면 재사용할 수 있다.
+
+**Q2. Pydantic에서 회원 ID가 int로 검증되면 해당 회원이 반드시 DB에 존재하나?**  
+A. 아니다. 타입 유효성과 DB 존재성은 별개다.
+
+**Q3. HTTP 200이면 DB INSERT가 성공했다고 확신할 수 있나?**  
+A. 아니다. 테스트용 반환 코드만으로 200을 줄 수도 있다. DB 커밋과 저장 결과를 별도 확인해야 한다.
+
+**Q4. AI가 코드를 생성하면 개발 완료인가?**  
+A. 아니다. 계약 준수, 보안, 테스트, 회귀 검증의 증거가 있어야 완료로 판단할 수 있다.
+
+## 20. 이번 보강에 따른 TIL 완료 체크
+
+- [x] Frontend / Backend / Database 역할 구분
+- [x] 1차 → 2차 → 3차 학습 연결을 실무 관점으로 설명
+- [x] Uvicorn / FastAPI / Pydantic / SQLAlchemy / PostgreSQL 책임 구분
+- [x] Browser → HTTP/ASGI → Router → Service → Repository → DB → JSON 응답 흐름 정리
+- [x] API Contract와 Definition of Done의 차이 정리
+- [x] AI 개발 및 검증 책임과 회사형 사례 정리
+- [x] 원문 15강 로드맵을 향후 학습 과제로 기록
+- [ ] 실제 로컬 API/DB 실행 및 증빙 수집 (미실행)
